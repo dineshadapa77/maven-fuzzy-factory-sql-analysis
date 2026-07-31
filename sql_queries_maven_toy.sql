@@ -1,27 +1,57 @@
+-- ==========================================================
+-- Maven Fuzzy Factory SQL Business Analysis
+-- Author: Dinesh Adapa
+-- Database: MySQL
+-- Description:
+-- This project analyzes an e-commerce database to evaluate
+-- website performance, marketing effectiveness, product
+-- performance, customer behavior, and business profitability.
+-- ==========================================================
+
+-- Create and select database
+
 CREATE SCHEMA maven_toys;
 USE maven_toys;
- show tables
- 
- select * from products;
- 
- 
- DESCRIBE orders;
+
+-- Display all tables available in the database
+
+SHOW TABLES;
+
+-- Preview products table
+
+SELECT * FROM products;
+
+-- ==========================================================
+-- Explore Database Structure
+-- ==========================================================
+
+DESCRIBE orders;
 DESCRIBE order_items;
 DESCRIBE products;
 DESCRIBE website_sessions;
 DESCRIBE website_pageviews;
 DESCRIBE order_item_refunds;
 
-
-
+-- ==========================================================
+-- Business Question 1
+-- How many website sessions did the company receive?
+-- ==========================================================
 
 SELECT COUNT(*) AS total_sessions
 FROM website_sessions;
 
+-- ==========================================================
+-- Business Question 2
+-- How many orders were placed?
+-- ==========================================================
 
 SELECT COUNT(*) AS total_orders
 FROM orders;
 
+-- ==========================================================
+-- Business Question 3
+-- What is the website conversion rate?
+-- ==========================================================
 
 SELECT
     COUNT(DISTINCT o.order_id) * 100.0 /
@@ -30,16 +60,28 @@ FROM website_sessions ws
 LEFT JOIN orders o
 ON ws.website_session_id = o.website_session_id;
 
+-- ==========================================================
+-- Business Question 4
+-- What is the total revenue generated?
+-- ==========================================================
+
 SELECT
     ROUND(SUM(price_usd),2) AS total_revenue
 FROM orders;
 
-
+-- ==========================================================
+-- Business Question 5
+-- What is the total profit earned?
+-- ==========================================================
 
 SELECT
     ROUND(SUM(price_usd - cogs_usd),2) AS total_profit
 FROM orders;
 
+-- ==========================================================
+-- Business Question 6
+-- Which marketing source generates the highest website traffic?
+-- ==========================================================
 
 SELECT
     utm_source,
@@ -48,6 +90,10 @@ FROM website_sessions
 GROUP BY utm_source
 ORDER BY total_sessions DESC;
 
+-- ==========================================================
+-- Business Question 7
+-- Which marketing source generates the highest number of orders?
+-- ==========================================================
 
 SELECT
     ws.utm_source,
@@ -58,6 +104,10 @@ ON ws.website_session_id = o.website_session_id
 GROUP BY ws.utm_source
 ORDER BY total_orders DESC;
 
+-- ==========================================================
+-- Business Question 8
+-- Which marketing source generates the highest revenue?
+-- ==========================================================
 
 SELECT
     ws.utm_source,
@@ -68,7 +118,10 @@ ON ws.website_session_id = o.website_session_id
 GROUP BY ws.utm_source
 ORDER BY total_revenue DESC;
 
-
+-- ==========================================================
+-- Business Question 9
+-- Which marketing source has the highest conversion rate?
+-- ==========================================================
 
 SELECT
     ws.utm_source,
@@ -85,7 +138,10 @@ ON ws.website_session_id = o.website_session_id
 GROUP BY ws.utm_source
 ORDER BY conversion_rate DESC;
 
-
+-- ==========================================================
+-- Business Question 10
+-- Which products generate the highest revenue?
+-- ==========================================================
 
 SELECT
     p.product_name,
@@ -96,7 +152,10 @@ ON oi.product_id = p.product_id
 GROUP BY p.product_name
 ORDER BY total_revenue DESC;
 
-
+-- ==========================================================
+-- Business Question 11
+-- Which products generate the highest profit?
+-- ==========================================================
 
 SELECT
     p.product_name,
@@ -107,6 +166,11 @@ ON oi.product_id = p.product_id
 GROUP BY p.product_name
 ORDER BY total_profit DESC;
 
+-- ==========================================================
+-- Business Question 12
+-- Which products have the highest sales volume?
+-- ==========================================================
+
 SELECT
     p.product_name,
     COUNT(*) AS total_items_sold
@@ -116,6 +180,10 @@ ON oi.product_id = p.product_id
 GROUP BY p.product_name
 ORDER BY total_items_sold DESC;
 
+-- ==========================================================
+-- Business Question 13
+-- Which products have the highest refund amount?
+-- ==========================================================
 
 SELECT
     p.product_name,
@@ -128,7 +196,10 @@ ON oi.product_id = p.product_id
 GROUP BY p.product_name
 ORDER BY total_refund DESC;
 
-
+-- ==========================================================
+-- Business Question 14
+-- Which products have the highest refund rate?
+-- ==========================================================
 
 SELECT
     p.product_name,
@@ -147,6 +218,10 @@ ON oi.product_id = p.product_id
 GROUP BY p.product_name
 ORDER BY refund_rate DESC;
 
+-- ==========================================================
+-- Business Question 15
+-- What is the distribution of new and repeat website sessions?
+-- ==========================================================
 
 SELECT
     is_repeat_session,
@@ -154,11 +229,15 @@ SELECT
 FROM website_sessions
 GROUP BY is_repeat_session;
 
+-- Preview website sessions table
 
+SELECT *
+FROM website_sessions;
 
-select * from website_sessions
-
-
+-- ==========================================================
+-- Business Question 16
+-- Which device type generates the most website sessions?
+-- ==========================================================
 
 SELECT
     device_type,
@@ -166,6 +245,11 @@ SELECT
 FROM website_sessions
 GROUP BY device_type
 ORDER BY total_sessions DESC;
+
+-- ==========================================================
+-- Business Question 17
+-- Which device type has the highest conversion rate?
+-- ==========================================================
 
 SELECT
     ws.device_type,
@@ -182,6 +266,10 @@ ON ws.website_session_id = o.website_session_id
 GROUP BY ws.device_type
 ORDER BY conversion_rate DESC;
 
+-- ==========================================================
+-- Business Question 18
+-- Which website pages receive the highest number of visits?
+-- ==========================================================
 
 SELECT
     pageview_url,
@@ -190,6 +278,10 @@ FROM website_pageviews
 GROUP BY pageview_url
 ORDER BY visits DESC;
 
+-- ==========================================================
+-- Business Question 19
+-- At what hour of the day does the website receive the most traffic?
+-- ==========================================================
 
 SELECT
     HOUR(created_at) AS hour_of_day,
@@ -198,6 +290,10 @@ FROM website_sessions
 GROUP BY hour_of_day
 ORDER BY hour_of_day;
 
+-- ==========================================================
+-- Business Question 20
+-- Which day of the week generates the highest number of orders?
+-- ==========================================================
 
 SELECT
     DAYNAME(created_at) AS day_name,
